@@ -1,0 +1,41 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./api_keys.caddy:/etc/caddy/api_keys.caddy:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      gotenberg:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    restart: unless-stopped
+    command:
+      - "gotenberg"
+      - "--api-timeout=60s"
+      - "--libreoffice-disable-routes=true"    # Disable if not using Office file conversion
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 2G   # Chromium can be hungry
+          cpus: '2'
+
+volumes:
+  caddy_data:
+  caddy_config:

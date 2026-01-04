@@ -1,0 +1,26 @@
+example.com {
+    import /etc/caddy/api_keys.caddy
+
+    respond /health 200
+
+    @unauthorized not vars {is_authorized} "true"
+    respond @unauthorized "Unauthorized" 401 {
+        close
+    }
+
+    # Limit request body size
+    request_body {
+        max_size 50MB
+    }
+
+    log {
+        output file /data/access.log
+        format json
+    }
+
+    reverse_proxy gotenberg:3000 {
+        transport http {
+            read_timeout 60s
+        }
+    }
+}

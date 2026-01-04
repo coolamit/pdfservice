@@ -1,0 +1,6 @@
+map {header.X-Api-Key} {is_authorized} {
+    # Add your API keys here
+    "example-api-key"     "true"
+
+    default "false"
+}
