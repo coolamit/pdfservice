@@ -15,6 +15,7 @@ This setup provides:
 2. Update `Caddyfile` with your domain
 3. Add your API keys to `api_keys.caddy`
 4. Start the containers:
+
 ```bash
 docker compose up -d
 ```
@@ -26,6 +27,7 @@ Caddy automatically provisions SSL certificates via Let's Encrypt.
 ### API Keys
 
 Add or remove keys in `api_keys.caddy`:
+
 ```
 map {header.X-Api-Key} {is_authorized} {
     "your-api-key-here"     "true"
@@ -72,6 +74,16 @@ curl -X POST \
 ```
 
 See [Gotenberg documentation](https://gotenberg.dev/docs/routes) for all available endpoints.
+
+## PHP Integration
+
+Use the official [gotenberg-php](https://github.com/gotenberg/gotenberg-php) package to integrate with your PHP application:
+
+```bash
+composer require gotenberg/gotenberg-php
+```
+
+For API key authentication, add a custom HTTP client that includes the `X-Api-Key` header with each request.
 
 ## Resource Limits
 
